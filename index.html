@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Utalás Segéd</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f1f5f9;
+            margin: 0;
+            padding: 16px;
+            color: #0f172a;
+        }
+        h2 { text-align: center; margin-top: 0; font-size: 22px; color: #1e293b; }
+        textarea {
+            width: 100%;
+            height: 120px;
+            padding: 14px;
+            border: 2px dashed #94a3b8;
+            border-radius: 10px;
+            font-size: 16px;
+            box-sizing: border-box;
+            margin-bottom: 20px;
+            resize: none;
+            background-color: #ffffff;
+        }
+        textarea:focus { border-color: #3b82f6; outline: none; background-color: #f8fafc; }
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border-top: 5px solid #3b82f6;
+        }
+        .header-row { border-bottom: 1px solid #e2e8f0; padding-bottom: 12px; margin-bottom: 12px; }
+        .name { font-size: 20px; font-weight: 800; color: #1e293b; }
+        .invoice-id { font-size: 14px; color: #64748b; margin-top: 4px; }
+        
+        .info-block {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 16px;
+        }
+        .info-item { margin-bottom: 8px; }
+        .info-item:last-child { margin-bottom: 0; }
+        .info-label { font-size: 12px; font-weight: bold; color: #64748b; text-transform: uppercase; display: block; margin-bottom: 2px; }
+        .amount-value { color: #16a34a; font-size: 20px; font-weight: bold; }
+        .comment-value { font-size: 16px; font-weight: bold; color: #0f172a; word-break: break-all; }
+        
+        .btn-group { display: flex; gap: 10px; }
+        button {
+            flex: 1;
+            padding: 14px 8px;
+            font-size: 15px;
+            font-weight: bold;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            touch-action: manipulation;
+        }
+        button.success { background-color: #16a34a !important; }
+        .btn-amount { background-color: #2563eb; }
+        .btn-comment { background-color: #475569; }
+        
+        .clear-btn {
+            width: 100%; padding: 14px; background: #ef4444; color: white;
+            border: none; border-radius: 8px; font-size: 16px; font-weight: bold;
+            margin-bottom: 20px; display: none;
+        }
+        #results { padding-bottom: 40px; }
+    </style>
+</head>
+<body>
+
+    <h2>Ebéd Utalás Segéd</h2>
+    
+    <textarea id="pasteArea" placeholder="Illeszd be (Paste) a kijelölt táblázatot..."></textarea>
+    <button id="clearBtn" class="clear-btn" onclick="clearAll()">Törlés / Új másolás</button>
+
+    <div id="results"></div>
+
+    <script>
+        const pasteArea = document.getElementById('pasteArea');
+        const resultsDiv = document.getElementById('results');
+        const clearBtn = document.getElementById('clearBtn');
+
+        pasteArea.addEventListener('input', function(e) {
+            processText(e.target.value);
+        });
+
+        function processText(text) {
+            // A regex változatlan, de masszívabb dátumfelismeréssel
+            const regex = /(CGK-\d{4}\/\d{4,5})\s*([a-záéíóöőúüűA-ZÁÉÍÓÖŐÚÜŰ\s\.\-]+?)\s*(-?[\d\s]+)\s*Ft[\s\r\n]*(-?[\d\s]+)\s*Ft[\s\r\n]*\d{4}[.-]\d{2}[.-]\d{2}\.?[\s\r\n]*\d{4}[.-]\d{2}[.-]\d{2}\.?[\s\r\n]*utalás([\s\r\n]*\d{4}[-.]\d{2}[-.]\d{2}\s\d{2}:\d{2}:\d{2})?/gi;
+            
+            let match;
+            let items = [];
+
+            while ((match = regex.exec(text)) !== null) {
+                const invoice_id = match[1].trim();
+                const name = match[2].trim();
+                
+                const amountRaw = match[3].replace(/\s+/g, '');
+                const amount = parseInt(amountRaw, 10);
+                
+                // JAVÍTVA: A teljesítés ideje az 5-ös számú találat (match[5]), nem a 6-os!
+                const hasCompletionTime = match[5] ? match[5].trim() !== '' : false;
+
+                // Ha az összeg nagyobb mint 0, ÉS még nincs teljesítési időbélyege
+                if (amount > 0 && !hasCompletionTime) {
+                    items.push({ id: invoice_id, name: name, amount: amount });
+                }
+            }
+
+            if (items.length > 0) {
+                pasteArea.style.display = 'none';
+                clearBtn.style.display = 'block';
+                renderCards(items);
+            } else {
+                alert("Nem találtam kifizetetlen, fizetendő számlát a másolt szövegben.");
+                pasteArea.value = '';
+            }
+        }
+
+        function renderCards(items) {
+            resultsDiv.innerHTML = '';
+            
+            const info = document.createElement('div');
+            info.style = "text-align:center; font-weight:bold; margin-bottom: 15px; color: #2563eb;";
+            info.innerText = `Felismerve: ${items.length} db kifizetetlen tétel`;
+            resultsDiv.appendChild(info);
+
+            items.forEach((item) => {
+                const pureAmount = String(item.amount).replace(/\s+/g, ''); 
+                const comment = `${item.id} ${item.name}`.trim();
+                const formattedAmount = new Intl.NumberFormat('hu-HU').format(item.amount) + " Ft";
+                
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <div class="header-row">
+                        <div class="name">${item.name}</div>
+                        <div class="invoice-id">Számlaszám: ${item.id}</div>
+                    </div>
+                    
+                    <div class="info-block">
+                        <div class="info-item">
+                            <span class="info-label">Fizetendő összeg:</span>
+                            <span class="amount-value">${formattedAmount}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Közlemény:</span>
+                            <span class="comment-value">${comment}</span>
+                        </div>
+                    </div>
+
+                    <div class="btn-group">
+                        <button class="btn-amount" onclick="copyToClipboard(this, '${pureAmount}')">
+                            Összeg
+                        </button>
+                        <button class="btn-comment" onclick="copyToClipboard(this, '${comment}')">
+                            Közlemény
+                        </button>
+                    </div>
+                `;
+                resultsDiv.appendChild(card);
+            });
+        }
+
+        function copyToClipboard(btn, text) {
+            navigator.clipboard.writeText(text).then(() => {
+                const originalText = btn.innerText;
+                btn.innerText = "Másolva! ✓";
+                btn.classList.add("success");
+                
+                setTimeout(() => {
+                    btn.innerText = originalText;
+                    btn.classList.remove("success");
+                }, 1500);
+            }).catch(err => {
+                alert("Hiba a másoláskor! Próbáld újra.");
+            });
+        }
+
+        function clearAll() {
+            pasteArea.value = '';
+            pasteArea.style.display = 'block';
+            clearBtn.style.display = 'none';
+            resultsDiv.innerHTML = '';
+        }
+    </script>
+</body>
+</html>
