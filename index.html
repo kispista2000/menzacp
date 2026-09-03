@@ -13,6 +13,22 @@
             color: #0f172a;
         }
         h2 { text-align: center; margin-top: 0; font-size: 22px; color: #1e293b; }
+        
+        .paste-btn {
+            width: 100%;
+            padding: 14px;
+            background-color: #f59e0b;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 12px;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .paste-btn:active { background-color: #d97706; }
+
         textarea {
             width: 100%;
             height: 120px;
@@ -73,29 +89,64 @@
             border: none; border-radius: 8px; font-size: 16px; font-weight: bold;
             margin-bottom: 20px; display: none;
         }
-        #results { padding-bottom: 40px; }
+        #results { padding-bottom: 20px; }
+        
+        .footer-link {
+            text-align: center;
+            margin-top: 20px;
+            padding-bottom: 30px;
+        }
+        .footer-link a {
+            color: #3b82f6;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        .footer-link a:hover { text-decoration: underline; }
     </style>
 </head>
 <body>
 
     <h2>Ebéd Utalás Segéd</h2>
     
-    <textarea id="pasteArea" placeholder="Illeszd be (Paste) a kijelölt táblázatot..."></textarea>
+    <div id="inputSection">
+        <button class="paste-btn" onclick="pasteFromClipboard()">📋 Vágólap beillesztése</button>
+        <textarea id="pasteArea" placeholder="Vagy illeszd be (Paste) ide hosszan nyomva a kijelölt táblázatot..."></textarea>
+    </div>
+    
     <button id="clearBtn" class="clear-btn" onclick="clearAll()">Törlés / Új másolás</button>
 
     <div id="results"></div>
+
+    <div class="footer-link">
+        <a href="https://github.com/kispista2000/menzacp#readme" target="_blank">📖 Dokumentáció és forráskód (GitHub)</a>
+    </div>
 
     <script>
         const pasteArea = document.getElementById('pasteArea');
         const resultsDiv = document.getElementById('results');
         const clearBtn = document.getElementById('clearBtn');
+        const inputSection = document.getElementById('inputSection');
 
         pasteArea.addEventListener('input', function(e) {
             processText(e.target.value);
         });
 
+        async function pasteFromClipboard() {
+            try {
+                const text = await navigator.clipboard.readText();
+                if (text) {
+                    pasteArea.value = text;
+                    processText(text);
+                } else {
+                    alert("A vágólap üres!");
+                }
+            } catch (err) {
+                alert("A böngésző biztonsági okokból blokkolta a gombot. Kérlek, nyomj hosszan az alatta lévő fehér dobozba, és válaszd a Beillesztés opciót!");
+            }
+        }
+
         function processText(text) {
-            // A regex változatlan, de masszívabb dátumfelismeréssel
             const regex = /(CGK-\d{4}\/\d{4,5})\s*([a-záéíóöőúüűA-ZÁÉÍÓÖŐÚÜŰ\s\.\-]+?)\s*(-?[\d\s]+)\s*Ft[\s\r\n]*(-?[\d\s]+)\s*Ft[\s\r\n]*\d{4}[.-]\d{2}[.-]\d{2}\.?[\s\r\n]*\d{4}[.-]\d{2}[.-]\d{2}\.?[\s\r\n]*utalás([\s\r\n]*\d{4}[-.]\d{2}[-.]\d{2}\s\d{2}:\d{2}:\d{2})?/gi;
             
             let match;
@@ -108,17 +159,15 @@
                 const amountRaw = match[3].replace(/\s+/g, '');
                 const amount = parseInt(amountRaw, 10);
                 
-                // JAVÍTVA: A teljesítés ideje az 5-ös számú találat (match[5]), nem a 6-os!
                 const hasCompletionTime = match[5] ? match[5].trim() !== '' : false;
 
-                // Ha az összeg nagyobb mint 0, ÉS még nincs teljesítési időbélyege
                 if (amount > 0 && !hasCompletionTime) {
                     items.push({ id: invoice_id, name: name, amount: amount });
                 }
             }
 
             if (items.length > 0) {
-                pasteArea.style.display = 'none';
+                inputSection.style.display = 'none';
                 clearBtn.style.display = 'block';
                 renderCards(items);
             } else {
@@ -189,7 +238,7 @@
 
         function clearAll() {
             pasteArea.value = '';
-            pasteArea.style.display = 'block';
+            inputSection.style.display = 'block';
             clearBtn.style.display = 'none';
             resultsDiv.innerHTML = '';
         }
