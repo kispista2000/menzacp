@@ -45,6 +45,6 @@ A táblázatból kimásolt szöveg a vágólapon általában így néz ki (össz
 ÉtkezőSzámla összesenKedvezményKiállításFiz. határidőFiz. módTeljesítés idejeCGK-2026/00363Minta Anna5 586 Ft
 5 586 Ft2026.09.01.2026.09.11.utalásCGK-2026/00361Minta Anna-11 172 Ft
 0 Ft2026.09.01.2026.09.11.utalás2026-09-01 13:24:55CGK-2026/00271Teszt Bence7 942 Ft
-0 Ft2026.08.28.2026.09.09.utalásCGK-2026/00223Kovács Lili11 172 Ft
-0 Ft2026.08.28.2026.09.09.utalás2026-09-01 13:24:59CGK-2026/00099Kovács Lili14 193 Ft
+0 Ft2026.08.28.2026.09.09.utalásCGK-2026/00223Minta Anna11 172 Ft
+0 Ft2026.08.28.2026.09.09.utalás2026-09-01 13:24:59CGK-2026/00099Próba Elek14 193 Ft
 0 Ft2026.08.28.2026.09.09.utalás
