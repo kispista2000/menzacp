@@ -18,8 +18,8 @@ Jelöld ki az étkezési felületen a számlákat tartalmazó táblázatot (fejl
 
 ### 2. Beillesztés az Utalás Segédbe
 Illeszd be a szöveget az alkalmazásba a narancssárga gombbal. A program azonnal kártyákra bontja a kifizetetlen tételeket.
-![Az Utalás Segéd felülete](utalasseged1.png)
 
+![Az Utalás Segéd felülete](utalasseged1.png)
 ![Az Utalás Segéd felülete](utalasseged2.png)
 
 ## 🚀 Használati útmutató
