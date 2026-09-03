@@ -4,8 +4,6 @@
 
 Egy egyszerű, böngészőben futó (kliensoldali) webalkalmazás, amely megkönnyíti az iskolai étkezés számláinak tömeges, manuális átutalását (pl. Revolut vagy más mobilbanki applikációk felületén). 
 
-A szkript a `index.html` fájlban található, és [közvetlenül hivatkozik erre a dokumentációra](https://FELHASZNALONEVED.github.io/REPONEVED/).
-
 ## 📝 Rövid összefoglaló
 A szolgáltatók weboldalairól kimásolt nyers táblázatos adatokból a program automatikusan kinyeri a fizetendő tételeket. Kiszűri a 0 Ft-os, stornózott, vagy már kifizetett számlákat, a fennmaradókat pedig átlátható kártyákká alakítja. A kártyákon található gombok segítségével az **Összeg** (szigorúan szóközök nélkül) és a **Közlemény** egyetlen érintéssel a vágólapra másolható.
 
@@ -19,24 +17,24 @@ Jelöld ki az étkezési felületen a számlákat tartalmazó táblázatot (fejl
 ![Menzás felület kijelölése](menzaszamlak.jpg)
 
 ### 2. Beillesztés az Utalás Segédbe
-Illeszd be a szöveget az alkalmazásba. A program azonnal kártyákra bontja a kifizetetlen tételeket.
+Illeszd be a szöveget az alkalmazásba a narancssárga gombbal. A program azonnal kártyákra bontja a kifizetetlen tételeket.
 
-![Az Utalás Segéd felülete](utalasseged.jpg)
+![Az Utalás Segéd felülete](utalasseged.png)
 
 ## 🚀 Használati útmutató
 
-### Telepítés (Mobilon)
-Az alkalmazást nem kell telepíteni, de a kényelmesebb használat érdekében érdemes kitűzni a kezdőképernyőre:
-1. Nyisd meg [az alkalmazás linkjét](https://FELHASZNALONEVED.github.io/REPONEVED/) a mobilod böngészőjében (pl. Chrome).
-2. A böngésző menüjében (jobb felül három pötty) válaszd a **Felvétel a kezdőképernyőre** (Add to Home screen) lehetőséget.
-3. Innentől az alkalmazás úgy indul, mint egy natív telefonos app.
-
 ### Utalás menete
 1. Másold ki a számlákat a szolgáltató oldaláról (lásd fenti kép).
-2. Nyisd meg az **Ebéd Utalás Segéd** alkalmazást, és illeszd be a szöveget a szaggatott vonalas mezőbe.
+2. Nyisd meg az **Ebéd Utalás Segéd** alkalmazást, és nyomj a **📋 Vágólap beillesztése** gombra *(első alkalommal a böngésző engedélyt kérhet a vágólap olvasására)*.
 3. Nyomj az **Összeg** gombra a kívánt gyereknél, majd illeszd be a banki applikációdba.
 4. Térj vissza, nyomj a **Közlemény** gombra, és illeszd be azt is.
 5. Ismételd ezt a kártyákon végighaladva!
+
+### Telepítés (Mobilon)
+Az alkalmazást nem kell telepíteni, de a kényelmesebb használat érdekében érdemes kitűzni a kezdőképernyőre:
+1. Nyisd meg [az alkalmazás linkjét](https://kispista2000.github.io/menzacp/) a mobilod böngészőjében (pl. Chrome).
+2. A böngésző menüjében (jobb felül három pötty) válaszd a **Felvétel a kezdőképernyőre** (Add to Home screen) lehetőséget.
+3. Innentől az alkalmazás úgy indul, mint egy natív telefonos app.
 
 ## 📋 Minta a beillesztendő (vágólap) nyers szövegre
 
